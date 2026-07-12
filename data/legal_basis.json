@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "title": "中德 PE 相关法律条文引用库",
+    "sources": ["《中华人民共和国和德意志联邦共和国对所得和财产避免双重征税和防止偷漏税的协定》(2014)", "OECD 税收协定范本及注释 (2017年版)", "德国租税通则 (Abgabenordnung, AO)", "德国商法典 (Handelsgesetzbuch, HGB)"]
+  },
+  "provisions": {
+    "agreement_art5_1": {
+      "title": "协定第5条第1款 — PE基本定义",
+      "content": "在本协定中，'常设机构'一语是指企业进行全部或部分营业的固定营业场所。",
+      "source": "中德协定第5条第1款",
+      "key_elements": ["营业场所 (place of business)", "固定性 (fixed)", "通过该场所进行营业活动 (carrying on business through)"]
+    },
+    "agreement_art5_2": {
+      "title": "协定第5条第2款 — PE列举",
+      "content": "'常设机构'一语特别包括：管理场所；分支机构；办事处；工厂；作业场所；矿场、油井或气井、采石场或者其他开采自然资源的场所。",
+      "source": "中德协定第5条第2款"
+    },
+    "agreement_art5_3": {
+      "title": "协定第5条第3款 — 工程型PE",
+      "content": "'常设机构'一语还包括：建筑工地，建筑、装配或安装工程，或者与其有关的监督管理活动，但仅以该工地、工程或活动连续超过12个月的为限。",
+      "source": "中德协定第5条第3款",
+      "key_threshold": "连续12个月（含因天气、资金等停工期间）"
+    },
+    "agreement_art5_4": {
+      "title": "协定第5条第4款 — 准备性/辅助性豁免",
+      "content": "虽有本条上述规定，'常设机构'一语应认为不包括：(a)专为存储、陈列或者交付本企业货物或者商品的目的而使用的设施；(b)专为存储、陈列或者交付的目的而保存本企业货物或者商品的库存；(c)专为另一企业加工的目的而保存本企业货物或者商品的库存；(d)专为本企业采购货物或者商品，或者搜集信息的目的所设的固定营业场所；(e)专为本企业进行任何其他准备性或辅助性活动的目的所设的固定营业场所。",
+      "source": "中德协定第5条第4款"
+    },
+    "agreement_art5_5": {
+      "title": "协定第5条第5款 — 代理人PE",
+      "content": "虽有本条第1款和第2款的规定，当一个人（适用第6款规定的独立地位代理人除外）在缔约国一方代表缔约国另一方的企业进行活动，有权以该企业的名义签订合同并经常行使这种权力，对于这个人为企业进行的任何活动，应认为该企业在该缔约国一方设有常设机构。",
+      "source": "中德协定第5条第5款",
+      "key_elements": ["非独立代理人", "有权以企业名义签订合同", "经常行使缔约权"]
+    },
+    "agreement_art5_6": {
+      "title": "协定第5条第6款 — 独立代理人豁免",
+      "content": "企业仅通过按常规经营其业务的经纪人、一般佣金代理人或者任何其他独立地位代理人在缔约国一方进行营业，不应认为在该缔约国一方设有常设机构。",
+      "source": "中德协定第5条第6款"
+    },
+    "ao_12": {
+      "title": "AO §12 — 常设机构法定定义",
+      "content": "Betriebstätte ist jede feste Geschäftseinrichtung oder Anlage, die der Tätigkeit eines Unternehmens dient. Als Betriebstätten sind insbesondere anzusehen: die Stätte der Geschäftsleitung, Zweigniederlassungen, Geschäftsstellen, Fabrikations- oder Werkstätten, Warenlager, Ein- oder Verkaufsstellen, Bergwerke, Steinbrüche oder andere stehende, örtlich fortschreitende oder schwimmende Stätten der Gewinnung von Bodenschätzen, Bauausführungen oder Montagen, die länger als sechs Monate dauern.",
+      "source": "德国 AO §12",
+      "key_difference": "德国国内法建筑工程PE门槛为6个月（短于中德协定的12个月）——但双边协定优先适用"
+    },
+    "ao_13": {
+      "title": "AO §13 — 常设代理人",
+      "content": "Steht eine Person zu einem Unternehmen in dem Verhältnis eines ständigen Vertreters, so wird sie für dieses Unternehmen tätig und schließt für dessen Rechnung Geschäfte ab. Ein ständiger Vertreter begründet eine Betriebstätte des Unternehmens.",
+      "source": "德国 AO §13"
+    },
+    "hgb_238": {
+      "title": "HGB §238 — 簿记义务",
+      "content": "Jeder Kaufmann ist verpflichtet, Bücher zu führen und in diesen seine Handelsgeschäfte und die Lage seines Vermögens nach den Grundsätzen ordnungsmäßiger Buchführung ersichtlich zu machen.",
+      "source": "德国 HGB §238",
+      "relevance": "PE构成后触发德国商法典下的独立账簿记录义务"
+    },
+    "hgb_242": {
+      "title": "HGB §242 — 年报编制义务",
+      "content": "Der Kaufmann hat zu Beginn seines Handelsgewerbes und für den Schluss eines jeden Geschäftsjahrs einen das Verhältnis seines Vermögens und seiner Schulden darstellenden Abschluss (Eröffnungsbilanz, Jahresbilanz) aufzustellen.",
+      "source": "德国 HGB §242",
+      "relevance": "PE构成后须编制年报"
+    },
+    "beps_action7": {
+      "title": "BEPS 行动计划7 — 防止人为规避常设机构",
+      "content": "OECD/G20 BEPS 项目第7项行动计划对OECD范本第5条进行重大修改：降低代理人PE门槛（扩展'leading to the conclusion of contracts'标准）；收紧准备性/辅助性豁免（引入反碎片化规则）；防止通过佣金安排/拆分合同方式规避PE认定。",
+      "source": "OECD BEPS 行动7最终报告 (2015)"
+    }
+  }
+}

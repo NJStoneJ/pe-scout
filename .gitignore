@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+package-lock.json
+*.pptx
+*.pdf
+*.mp4
+workspace.zip
+build_ppt.js
+AI协作日志.html
