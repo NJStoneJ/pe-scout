@@ -9,3 +9,6 @@ package-lock.json
 workspace.zip
 build_ppt.js
 AI协作日志.html
+.env
+bm25_index_cache.pkl
+data/bm25_index_cache.pkl

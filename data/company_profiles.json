@@ -1,0 +1,164 @@
+{
+  "meta": {
+    "description": "PE-Scout 虚拟企业 Company Profiles — IB 投行风格单页概要",
+    "disclaimer": "全部为自行构造的模拟数据，不涉及任何真实企业",
+    "generated": "2026-07-14",
+    "currency": "EUR (€)",
+    "fiscal_year": "FY2025"
+  },
+  "companies": {
+    "sinoecom_logistics": {
+      "name": "SinoEcom Logistics GmbH",
+      "name_cn": "中商通达物流（德国）有限公司",
+      "ticker": "虚构 · 母公司：中商通达集团 (深交所：000000·虚构)",
+      "industry": "跨境电商物流",
+      "sub_industry": "海外仓配履约",
+      "headquarters": "中国深圳",
+      "german_location": "汉堡 (Hamburg) · Billbrook 工业区",
+      "founded": "2022",
+      "employees_total": 380,
+      "employees_germany": 5,
+      "german_operations_since": "2023 年 4 月",
+
+      "business_description": "中商通达物流是深圳跨境电商物流服务商，2023 年在德国汉堡租赁 2,000 平方米仓库，为中国跨境电商卖家提供 FBA 头程转运、海外仓存储、尾程配送一站式服务。德国仓库为纯履约中心，不设展示厅、不接受 walk-in 客户、不进行当地销售谈判——所有商务合同由深圳总部直接签署。",
+      "key_financials": {
+        "revenue_global_eur": 12000000,
+        "revenue_germany_eur": 3500000,
+        "germany_pretax_profit_eur": 420000,
+        "gross_margin": 0.22,
+        "ebitda_margin": 0.12,
+        "total_assets_global_eur": 8000000,
+        "total_equity_global_eur": 3500000
+      },
+      "german_asset_details": {
+        "warehouse_lease": "2,000 m² · €8.50/m²/月 · 3 年租约 (2026 年 6 月到期, 计划续租)",
+        "equipment": "货架系统 + 2 台电动叉车 + 包装流水线 · 账面净值 €120,000",
+        "inventory": "无自有存货（全部为客户货物）",
+        "employees": "5 人：仓库主管 1 人 + 分拣打包员 4 人"
+      },
+      "german_tax_profile": {
+        "vat_registered": true,
+        "ust_id": "DE123456789（虚构）",
+        "corporate_tax_status": "中国母公司直接运营 · 未在德国设立子公司",
+        "pe_status_assessed": "低风险 — 纯仓储+交付活动符合协定第5条第4款(a)(b)豁免",
+        "annual_compliance_cost_eur": 8000,
+        "tax_advisors": "委托德国本地税务师事务所处理月度 VAT 申报"
+      }
+    },
+
+    "solargiga_engineering": {
+      "name": "Solargiga Engineering GmbH & Co. KG",
+      "name_cn": "阳光嘉能工程有限两合公司",
+      "ticker": "虚构 · 母公司：阳光嘉能科技 (上交所科创板：688000·虚构)",
+      "industry": "新能源 · 光伏电站 EPC",
+      "sub_industry": "大型地面光伏电站建设与安装",
+      "headquarters": "中国合肥",
+      "german_location": "巴伐利亚州 (Bayern) · 多个项目现场",
+      "founded": "2018",
+      "employees_total": 1200,
+      "employees_germany": 23,
+      "german_operations_since": "2024 年 3 月",
+
+      "business_description": "阳光嘉能是中国光伏组件制造商，2024 年通过德国子公司 Solargiga Engineering GmbH & Co. KG 承接巴伐利亚州 50MW 大型地面光伏电站 EPC 总包项目。项目于 2024 年 3 月 1 日启动（含场地准备），合同总价 €18,000,000，预计 2026 年 1 月 31 日完工并网（工期总计 23 个月）。德国现场设有项目办公室（临时板房），15 名中国工程师与 8 名当地技工长期驻场。德国子公司由合肥母公司 100% 持股。",
+      "key_financials": {
+        "revenue_global_eur": 420000000,
+        "revenue_germany_eur": 18000000,
+        "germany_pretax_profit_eur": 8500000,
+        "gross_margin": 0.35,
+        "ebitda_margin": 0.28,
+        "total_assets_global_eur": 350000000,
+        "total_equity_global_eur": 180000000
+      },
+      "german_asset_details": {
+        "project_site": "巴伐利亚州 50MW 光伏电站 · 占地 80 公顷 · 地面安装",
+        "office": "现场临时板房办公室 · 集装箱改造 · 月租 €1,800",
+        "equipment": "光伏支架安装设备 · 电缆铺设机械 · 测试仪器 · 账面净值 €450,000",
+        "employees": "23 人：项目经理 2 人 + 工程师 13 人 + 当地技工 8 人"
+      },
+      "german_tax_profile": {
+        "vat_registered": true,
+        "ust_id": "DE987654321（虚构）",
+        "corporate_tax_status": "德国子公司独立法人 · KSt + GewSt + SolZ 纳税",
+        "pe_status_assessed": "已构成 PE — 工程持续 23 个月 > 12 个月门槛 (协定第5条第3款)",
+        "annual_compliance_cost_eur": 85000,
+        "tax_advisors": "慕尼黑 Big 4 税务团队 · 月度申报 + 年度审计"
+      }
+    },
+
+    "grandchina_legal": {
+      "name": "GrandChina Legal Partners",
+      "name_cn": "华宸法律咨询（法兰克福）事务所",
+      "ticker": "虚构 · 合伙企业 (PartG) · 非上市公司",
+      "industry": "专业服务 · 跨境法律咨询",
+      "sub_industry": "中德投资并购 · 公司法 · 税法",
+      "headquarters": "中国北京",
+      "german_location": "法兰克福 (Frankfurt am Main) · Westend 金融区",
+      "founded": "2019",
+      "employees_total": 95,
+      "employees_germany": 8,
+      "german_operations_since": "2020 年 6 月",
+
+      "business_description": "华宸法律是专注中德跨境业务的中型律所，2020 年在法兰克福设立联络处。联络处由 2 名中国合伙人常驻（均为德国律师协会注册外国律师），配备 3 名德国本地律师、2 名税务顾问、1 名行政助理。核心业务为代理中国企业在德并购尽职调查、合资谈判、公司设立及税务筹划。合伙人经常以律所名义与德国客户/交易对手签署委托合同和交易文件——权责不设限。该联络处 95% 以上的业务收入来源于服务华宸的中国母公司客户（仅有少量本地 walk-in 业务）。",
+      "key_financials": {
+        "revenue_global_eur": 15000000,
+        "revenue_germany_eur": 4500000,
+        "germany_pretax_profit_eur": 600000,
+        "gross_margin": 0.65,
+        "ebitda_margin": 0.32,
+        "total_assets_global_eur": 6000000,
+        "total_equity_global_eur": 2500000
+      },
+      "german_asset_details": {
+        "office": "法兰克福 Westend · 320 m² · 月租 €6,200 · 5 年租约",
+        "equipment": "办公家具 + IT 设备 · 账面净值 €80,000",
+        "employees": "8 人：合伙人 2 人 + 律师 3 人 + 税务顾问 2 人 + 行政 1 人"
+      },
+      "german_tax_profile": {
+        "vat_registered": true,
+        "ust_id": "DE456789123（虚构）",
+        "corporate_tax_status": "未设立德国法人 · 以中国律所分支机构运营 · 争议中",
+        "pe_status_assessed": "已构成 PE — 固定场所 (第5条第1款) + 经常缔约权 (第5条第5款) 双重构成",
+        "annual_compliance_cost_eur": 120000,
+        "tax_advisors": "自身税务顾问团队 + 外部审计 · 存在历史年度 PE 未申报风险"
+      }
+    },
+
+    "techtalent_outsourcing": {
+      "name": "TechTalent Solutions (Deutschland)",
+      "name_cn": "泰科达信息技术（德国）外包服务",
+      "ticker": "虚构 · 母公司：泰科达信息技术 (NASDAQ: TCTL·虚构)",
+      "industry": "IT 服务 · 软件开发外包",
+      "sub_industry": "SAP 系统定制 · 工业软件 · 嵌入式系统",
+      "headquarters": "中国杭州",
+      "german_location": "慕尼黑 (München) · 客户现场驻扎",
+      "founded": "2016",
+      "employees_total": 2200,
+      "employees_germany": 6,
+      "german_operations_since": "2024 年 7 月",
+
+      "business_description": "泰科达是中国 IT 外包服务商，2024 年 7 月与德国某 Tier-1 汽车零部件供应商签署 SAP S/4HANA 系统定制开发合同。合同期限 8 个月（2024.07.01 - 2025.02.28），金额 €800,000。6 名高级 SAP 工程师派驻客户慕尼黑工业园区办公场所，使用客户提供的工位和 IT 设备。合同明确：所有知识产权归属客户，泰科达人员为客户独立承包商身份提供技术服务，版权不持任何代理权限或签署权——所有合同变更和商务条款由杭州总部通过邮件确认后生效。",
+      "key_financials": {
+        "revenue_global_eur": 85000000,
+        "revenue_germany_eur": 800000,
+        "germany_pretax_profit_eur": 120000,
+        "gross_margin": 0.38,
+        "ebitda_margin": 0.22,
+        "total_assets_global_eur": 45000000,
+        "total_equity_global_eur": 22000000
+      },
+      "german_asset_details": {
+        "office": "无自有/租赁场所 · 全部在客户办公场所工作",
+        "equipment": "无自有设备 · 使用客户提供的工位和 IT 设备",
+        "employees": "6 人：全部为 SAP 高级工程师 · 均持有中国护照 · 德国商务签证 (D 类)"
+      },
+      "german_tax_profile": {
+        "vat_registered": false,
+        "ust_id": "无 · 未达 VAT 注册门槛 (年收入 < €1,000,000)",
+        "corporate_tax_status": "中国母公司直接签约 · 未在德设立任何法人实体",
+        "pe_status_assessed": "低风险 — 场所为客户所有 (无支配权) · 工期 8 月 < 12 月 · 无缔约权 · 独立承包商身份明确 · 但需注意若连续获取类似合同可能触发经济关联审查",
+        "annual_compliance_cost_eur": 3000,
+        "tax_advisors": "中国总部财务团队处理 · 未委托德国税务顾问"
+      }
+    }
+  }
+}

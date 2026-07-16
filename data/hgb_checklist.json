@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "title": "HGB 合规义务清单",
+    "description": "德国常设机构构成后的商法典合规要求自动清单",
+    "basis": "德国商法典 (HGB) + 德国租税通则 (AO)"
+  },
+  "levels": {
+    "low": {
+      "label": "低风险 — 无需采取行动",
+      "color": "#22C55E",
+      "sections": [
+        {
+          "title": "常规监控",
+          "icon": "monitor",
+          "items": [
+            {"task": "半年度审查德国业务活动性质和持续时间", "legal": "协定第5条第1款", "priority": "low", "deadline": "每6个月"},
+            {"task": "保留德国业务活动的详细记录备查", "legal": "AO §90 纳税协助义务", "priority": "low", "deadline": "持续"},
+            {"task": "关注BEPS 2.0支柱二对德国实体化的潜在影响", "legal": "欧盟最低税指令 2022/2523", "priority": "low", "deadline": "年度评估"}
+          ]
+        }
+      ]
+    },
+    "medium": {
+      "label": "中风险 — 建议准备性行动",
+      "color": "#F59E0B",
+      "sections": [
+        {
+          "title": "专业评估",
+          "icon": "assessment",
+          "items": [
+            {"task": "委托中德两地税务顾问出具正式PE风险意见书", "legal": "协定第5条 + AO §12-13", "priority": "high", "deadline": "30天内"},
+            {"task": "准备PE功能分析文件（人员、场所、合同、决策权）", "legal": "OECD AOA报告指引", "priority": "high", "deadline": "45天内"},
+            {"task": "评估德国营业活动是否可调整为'准备性/辅助性'", "legal": "协定第5条第4款 + BEPS 行动7", "priority": "medium", "deadline": "60天内"}
+          ]
+        },
+        {
+          "title": "文档准备",
+          "icon": "document",
+          "items": [
+            {"task": "梳理所有德国相关合同（雇佣、租赁、服务协议）", "legal": "AO §147 文件保存义务", "priority": "medium", "deadline": "30天内"},
+            {"task": "编制德国活动的时间线和人员配置表", "legal": "AO §90 协助义务", "priority": "medium", "deadline": "30天内"},
+            {"task": "建立德国业务活动的内部审批和监控流程", "legal": "AO §130 内控要求", "priority": "low", "deadline": "90天内"}
+          ]
+        }
+      ]
+    },
+    "high": {
+      "label": "高风险 — 紧迫行动",
+      "color": "#EF4444",
+      "sections": [
+        {
+          "title": "紧急法律行动",
+          "icon": "urgent",
+          "items": [
+            {"task": "立即聘请德国税务律师进行正式PE判定", "legal": "协定第5条 + AO §12-13", "priority": "critical", "deadline": "立即"},
+            {"task": "向德国主管税务机关申请预先裁定 (verbindliche Auskunft)", "legal": "AO §89 第2款", "priority": "critical", "deadline": "尽快（费用依争议金额）"},
+            {"task": "评估是否需向德国税务机关主动披露历史年度PE风险", "legal": "AO §153 更正申报义务", "priority": "high", "deadline": "45天内"},
+            {"task": "评估历史年度PE利润归属和潜在补税金额", "legal": "AO §162 推定课税 + AOA原则", "priority": "high", "deadline": "60天内"}
+          ]
+        },
+        {
+          "title": "架构调整评估",
+          "icon": "restructure",
+          "items": [
+            {"task": "评估设立德国子公司替代分支机构/代理安排的方案", "legal": "GmbHG / AktG", "priority": "high", "deadline": "90天内"},
+            {"task": "调整德国人员合同和授权范围（降低缔约权风险）", "legal": "协定第5条第5款", "priority": "high", "deadline": "30天内"},
+            {"task": "重新谈判德国客户合同中的服务性质条款", "legal": "民法典 + AGB条款", "priority": "medium", "deadline": "60天内"}
+          ]
+        }
+      ]
+    },
+    "constituted": {
+      "label": "已构成 PE — 全面合规",
+      "color": "#DC2626",
+      "sections": [
+        {
+          "title": "税务登记",
+          "icon": "register",
+          "items": [
+            {"task": "向主管德国税务机关登记常设机构 (Betriebstätten-Anmeldung)", "legal": "AO §137-139 税务登记义务", "priority": "critical", "deadline": "立即（PE构成后1个月内）"},
+            {"task": "申请德国增值税号 (USt-IdNr.)", "legal": "UStG §18", "priority": "critical", "deadline": "立即"},
+            {"task": "申请德国企业所得税号 (KSt-Nr.)", "legal": "KStG §49 + AO §138", "priority": "critical", "deadline": "立即"},
+            {"task": "在德国当地工商会 (IHK) 注册", "legal": "IHK-Gesetz", "priority": "high", "deadline": "PE登记后1个月内"}
+          ]
+        },
+        {
+          "title": "HGB 账簿体系建立",
+          "icon": "ledger",
+          "items": [
+            {"task": "按照GoB原则建立德国独立账簿（可中德双语）", "legal": "HGB §238 簿记义务 + §239 账簿形式", "priority": "critical", "deadline": "PE构成后立即"},
+            {"task": "开设单独的德国银行账户用于PE收支", "legal": "HGB §238 + GWG反洗钱", "priority": "high", "deadline": "30天内"},
+            {"task": "建立德国存货和固定资产台账", "legal": "HGB §240 财产目录 + §255 计价", "priority": "high", "deadline": "30天内"},
+            {"task": "按照德国AfA-Tabellen（官方折旧表）计提折旧", "legal": "HGB §253 + EStG §7 AfA", "priority": "high", "deadline": "首个财务年度末"}
+          ]
+        },
+        {
+          "title": "年报与审计",
+          "icon": "audit",
+          "items": [
+            {"task": "编制PE首年年度财务报表（资产负债表+损益表+附注）", "legal": "HGB §242 年报编制义务 + §264 格式要求", "priority": "critical", "deadline": "财务年度结束后3个月内"},
+            {"task": "PE利润归属分析（Authorized OECD Approach, AOA）", "legal": "AO §1 + OECD AOA指南(2010)", "priority": "critical", "deadline": "与年报同步"},
+            {"task": "如有必要，进行法定审计 (gesetzliche Prüfung)", "legal": "HGB §316 审计义务（视PE规模而定）", "priority": "medium", "deadline": "年报完成后"},
+            {"task": "向商业登记册 (Handelsregister) 提交年报", "legal": "HGB §325 公开义务", "priority": "high", "deadline": "年报完成后12个月内"}
+          ]
+        },
+        {
+          "title": "持续合规",
+          "icon": "ongoing",
+          "items": [
+            {"task": "按月/按季提交德国增值税申报 (USt-Voranmeldung)", "legal": "UStG §18 第1-2款", "priority": "critical", "deadline": "每月/每季第10日"},
+            {"task": "按季预缴企业所得税和营业税", "legal": "EStG §37 + GewStG §19 预缴", "priority": "critical", "deadline": "按税务机关通知书"},
+            {"task": "年度企业所得税和营业税汇算清缴", "legal": "KStG §31 + GewStG §14", "priority": "critical", "deadline": "次年7月31日（有税务顾问可延至次年2月底）"},
+            {"task": "关联交易文档（PE与总部之间的交易定价）", "legal": "AO §90 第3款 + GAufzV", "priority": "high", "deadline": "与年报同步"},
+            {"task": "员工个税代扣代缴 (Lohnsteuer-Anmeldung)", "legal": "EStG §38-42f Lohnsteuer", "priority": "high", "deadline": "每月第10日"},
+            {"task": "中国境外所得申报和境外税收抵免", "legal": "中国企业所得税法第3条+第23条", "priority": "high", "deadline": "与国内年度汇算清缴同步"}
+          ]
+        }
+      ]
+    }
+  }
+}

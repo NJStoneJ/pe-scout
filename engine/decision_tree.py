@@ -157,3 +157,49 @@ class PEEngine:
             {"id": cid, "name": c["name"], "subtitle": c["subtitle"], "industry": c["industry"]}
             for cid, c in cases["cases"].items()
         ]
+
+
+def compute_radar_data(result: PEResult) -> dict:
+    """Convert PE evaluation result to six-dimension radar chart data (0-100 scale)."""
+    max_fixed = 33   # 固定场所7题正权重合计 Q1(8)+Q2(6)+Q3(7)+Q7(8)=29 ≈ 33 cap
+    max_construct = 22  # 工程3题 Q8(6)+Q9(10)+Q10(6)=22
+    max_agent = 28  # 代理人5题 Q11(6)+Q12(10)+Q13(-8豁免)+Q14(7)+Q15(5)=28 cap（正权重）
+
+    def scale(val, cap):
+        if val <= 0:
+            return max(0, val)
+        return min(100, round(val / cap * 100))
+
+    fixed_score = result.group_scores.get("fixed_place", 0)
+    construct_score = result.group_scores.get("construction", 0)
+    agent_score = result.group_scores.get("agent", 0)
+
+    # Compliance burden: based on risk level
+    compliance_map = {"low": 10, "medium": 40, "high": 70, "constituted": 95}
+    compliance = compliance_map.get(result.risk_level, 10)
+
+    # Financial exposure: normalized from total score
+    financial = min(100, round(result.total_score / 57 * 100))
+
+    # Policy uncertainty: higher for borderline cases, lower for clear-cut
+    if result.risk_level == "low":
+        uncertainty = 20 if result.total_score > 4 else 10
+    elif result.risk_level == "medium":
+        uncertainty = 55
+    elif result.risk_level == "high":
+        uncertainty = 70
+    else:
+        uncertainty = 30  # Constituted = certain, but still complex
+
+    return {
+        "dimensions": [
+            {"axis": "固定场所风险", "value": scale(fixed_score, max_fixed)},
+            {"axis": "工程安装风险", "value": scale(construct_score, max_construct)},
+            {"axis": "代理人PE风险", "value": scale(agent_score, max_agent)},
+            {"axis": "合规负担", "value": compliance},
+            {"axis": "财务暴露度", "value": financial},
+            {"axis": "政策不确定性", "value": uncertainty},
+        ],
+        "risk_level": result.risk_level,
+        "risk_color": result.risk_color,
+    }
