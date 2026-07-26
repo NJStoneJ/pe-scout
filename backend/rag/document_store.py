@@ -40,11 +40,11 @@ class DocumentStore:
 
     def _cache_key(self) -> str:
         """Generate cache key based on German law file modification times"""
-        from backend.rag.german_law_loader import LAW_FILES, LAW_DIR
+        from backend.rag.german_law_loader import LAW_FILES, _resolve_file
         parts = [str(CACHE_VERSION)]
-        for label, fname in sorted(LAW_FILES.items()):
-            fp = LAW_DIR / fname
-            if fp.exists():
+        for label in sorted(LAW_FILES.keys()):
+            fp = _resolve_file(label)
+            if fp is not None:
                 parts.append(f"{label}:{fp.stat().st_mtime}")
         return "|".join(parts)
 

@@ -1,21 +1,10 @@
 """PE 税负影响财务模型 — ETR · ROE · 盈亏平衡 · 5年NPV"""
 
 from dataclasses import dataclass
-
-# Tax rates (Germany 2026)
-KST = 0.15          # Körperschaftsteuer
-SOLZ = 0.055 * KST  # Solidaritätszuschlag
-GEWST_BASE = 0.035
-AVG_HEBESATZ = 4.0
-GEWST = GEWST_BASE * AVG_HEBESATZ  # ≈ 14%
-COMBINED_RATE = KST + SOLZ + GEWST  # ≈ 29.825%
-DIV_WHT = 0.05      # 中德协定股息预提税率
-
-# HGB compliance annual cost estimates
-HGB_COST = {"low": 0, "medium": 5000, "high": 15000, "constituted": 35000}
-
-# Subsidiary setup cost (one-time)
-SUBSIDIARY_SETUP = 25000
+from engine.tax_constants import (
+    KST, SOLZ, GEWST, COMBINED_CORPORATE_RATE as COMBINED_RATE,
+    DIV_WHT_DTA as DIV_WHT, HGB_COST, SUBSIDIARY_SETUP_COST as SUBSIDIARY_SETUP
+)
 
 
 @dataclass

@@ -9,14 +9,36 @@ logger = logging.getLogger(__name__)
 from config import GERMAN_LAW_DIR
 LAW_DIR = Path(GERMAN_LAW_DIR)
 
-# File mapping
+# Clean filenames (primary). Place files in GERMAN_LAW_DIR with these names.
 LAW_FILES = {
-    "AO": "Lehrbuch Abgabenordnung (Uta Hey, Christian Lehnert) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
-    "EStG": "EStG () (z-library.sk, 1lib.sk, z-lib.sk).pdf",
-    "KStG": "Kommentar Körperschaftsteuer KStG (Arne Schnitger, Oliver Fehrenbacher) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
-    "UStG": "UStG (Christoph Wäger (editor)) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
-    "HGB": "HGB (Jost Scholl) (z-library.sk, 1lib.sk, z-lib.sk).epub",
+    "AO": "AO.pdf",
+    "EStG": "EStG.pdf",
+    "KStG": "KStG.pdf",
+    "UStG": "UStG.pdf",
+    "HGB": "HGB.epub",
 }
+
+# Fallback: alternative filenames for backward compatibility
+_FALLBACK_NAMES = {
+    "AO": ["Lehrbuch Abgabenordnung (Uta Hey, Christian Lehnert) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
+    "EStG": ["EStG () (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
+    "KStG": ["Kommentar Körperschaftsteuer KStG (Arne Schnitger, Oliver Fehrenbacher) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
+    "UStG": ["UStG (Christoph Wäger (editor)) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
+    "HGB": ["HGB (Jost Scholl) (z-library.sk, 1lib.sk, z-lib.sk).epub"],
+}
+
+
+def _resolve_file(label: str) -> Path | None:
+    """Resolve a law file path: try clean name first, then fallbacks."""
+    primary = LAW_DIR / LAW_FILES[label]
+    if primary.exists():
+        return primary
+    for alt_name in _FALLBACK_NAMES.get(label, []):
+        alt_path = LAW_DIR / alt_name
+        if alt_path.exists():
+            logger.info(f"Using fallback filename for {label}")
+            return alt_path
+    return None
 
 # PE-relevant German legal terms for filtering
 PE_TERMS = re.compile(
@@ -50,14 +72,15 @@ class GermanLawLoader:
     def load_all(self) -> list[dict]:
         """加载所有可用的德国法文件，返回文档列表"""
         documents = []
-        for label, fname in LAW_FILES.items():
-            filepath = LAW_DIR / fname
-            if not filepath.exists():
-                logger.warning(f"File not found: {filepath}")
+        for label in LAW_FILES:
+            filepath = _resolve_file(label)
+            if filepath is None:
+                logger.info(f"{label}: file not found in {LAW_DIR} (place {LAW_FILES[label]} there)")
                 continue
 
-            logger.info(f"Loading {label}: {fname[:60]}...")
+            logger.info(f"Loading {label}: {filepath.name[:60]}...")
 
+            fname = filepath.name
             if fname.endswith('.pdf'):
                 docs = self._load_pdf(label, filepath)
             elif fname.endswith('.epub'):
