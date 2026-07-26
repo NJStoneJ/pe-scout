@@ -6,7 +6,8 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-LAW_DIR = Path(r"C:\Quark\My e-Library\08_Politics_Law\Law\German_Law")
+from config import GERMAN_LAW_DIR
+LAW_DIR = Path(GERMAN_LAW_DIR)
 
 # File mapping
 LAW_FILES = {

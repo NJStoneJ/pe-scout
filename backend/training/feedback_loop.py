@@ -37,10 +37,7 @@ class FeedbackCollector:
             "correction": correction,
         }
         self.feedback_log.append(entry)
-
-        # 每10条保存一次
-        if len(self.feedback_log) % 10 == 0:
-            self._save()
+        self._save()  # 即时落盘，避免进程崩溃丢数据
 
         logger.info(f"Feedback recorded: rating={user_rating}, risk={result.get('risk_level')}")
 

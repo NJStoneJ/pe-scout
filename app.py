@@ -900,7 +900,7 @@ def render_chat_agent():
 
     # LLM status badge
     llm_available = agent.llm_agent is not None and agent.llm_agent.is_ready
-    badge_color = GREEN if llm_available else AMBER
+    badge_color = GREEN if llm_available else ORANGE
     badge_text = "LLM 已连接 · DeepSeek" if llm_available else "规则引擎模式（设置 DEEPSEEK_API_KEY 开启 LLM）"
     st.markdown(f"""
     <div style="background:{badge_color};border-radius:6px;padding:6px 14px;margin-bottom:12px;

@@ -93,7 +93,7 @@ pe-scout/
 │   ├── hgb_checklist.py            # HGB 合规清单加载器
 │   └── export.py                   # 报告导出工具
 ├── tests/
-│   └── test_engine.py              # 34 个自动化测试用例
+│   └── test_engine.py              # 117 个自动化测试用例
 └── requirements.txt
 ```
 
@@ -130,9 +130,9 @@ Layer 0: 法律依据 → Layer 1: PE 分类 → Layer 2: 触发条件/豁免 �
 | 评价维度 | 权重 | PE-Scout 对应能力 |
 |---------|------|------------------|
 | 财税场景价值与创新性 | 25% | 中德 PE 风险分析 + HGB 合规清单 + 六维雷达 + 税负 € 量化 |
-| AI Coding 融合度与协同质量 | 25% | Claude Code 全流程驱动，86% AI 代码占比，12 次关键交互日志 |
+| AI Coding 融合度与协同质量 | 25% | Claude Code 全流程驱动，86% AI 代码占比，16 次关键交互日志 |
 | 技术实现与用户体验 | 25% | Streamlit + FastAPI 双架构，9 页面，Agent + RAG + KG 三引擎 |
-| 过程文档与演示表现 | 25% | 10 页方案 PPT + 12 次 AI 协作日志 + 34 个自动化测试 |
+| 过程文档与演示表现 | 25% | 10 页方案 PPT + 16 次 AI 协作日志 + 34 个自动化测试 |
 | 加分项 | +5 | Streamlit Cloud 可部署公网 + AI 自动生成测试用例 + 财税知识图谱 |
 
 ---
@@ -141,7 +141,7 @@ Layer 0: 法律依据 → Layer 1: PE 分类 → Layer 2: 触发条件/豁免 �
 
 ```bash
 pytest tests/test_engine.py -v
-# 34 passed — 规则引擎、税负计算、雷达图、HGB清单、RAG文档、Agent、反馈收集
+# 117 passed — 规则引擎、税负计算、雷达图、HGB清单、RAG文档、Agent、反馈收集
 ```
 
 ---

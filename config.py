@@ -48,6 +48,12 @@ AGENT_MAX_ITERATIONS = 5
 AGENT_TEMPERATURE = 0.3
 AGENT_MAX_TOKENS = 2048
 
+# German law documents path (configurable for different machines)
+GERMAN_LAW_DIR = os.getenv(
+    "GERMAN_LAW_DIR",
+    str(PROJECT_ROOT / "legal_docs")
+)
+
 # RAG settings
 RAG_TOP_K = 5
 RAG_CHUNK_SIZE = 2000
