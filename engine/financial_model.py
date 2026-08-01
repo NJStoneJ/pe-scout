@@ -43,53 +43,57 @@ class FinancialModel:
         pretax_profit_eur: float,
         pe_risk_level: str,
         total_equity_global_eur: float = 3_500_000,
-        dividend_payout_ratio: float = 0.7,
+        china_cit_rate: float = 0.25,
         discount_rate: float = 0.08,
         growth_rate: float = 0.05,
     ) -> FinancialImpactResult:
-        """运行完整财务影响分析"""
+        """运行完整财务影响分析
+
+        PE 税负原理：
+        - PE前：德国对该经营利润无征税权（协定第7条），仅中国征 CIT
+        - PE后：德国征 PE 利润税 (~30%)，中国征 CIT 并给予境外税收抵免
+        """
 
         # === 1. ETR 计算 ===
-        wt_only = pretax_profit_eur * dividend_payout_ratio * DIV_WHT
-        etr_before = wt_only / pretax_profit_eur if pretax_profit_eur > 0 else 0
+        # PE 前：德国无税 + 中国 CIT
+        china_tax_before = pretax_profit_eur * china_cit_rate
+        total_tax_before = china_tax_before
+        etr_before = total_tax_before / pretax_profit_eur if pretax_profit_eur > 0 else 0
 
-        kst_solz = pretax_profit_eur * (KST + SOLZ)
-        gewst = pretax_profit_eur * GEWST
-        after_tax = pretax_profit_eur - kst_solz - gewst
-        div_wt_after = after_tax * dividend_payout_ratio * DIV_WHT
-        total_pe_tax = kst_solz + gewst + div_wt_after
-        etr_after = total_pe_tax / pretax_profit_eur if pretax_profit_eur > 0 else 0
+        # PE 后：德国 KSt+GewSt + 中国 CIT 扣减免税额
+        german_tax = pretax_profit_eur * (KST + SOLZ + GEWST)
+        credit_limit = pretax_profit_eur * china_cit_rate
+        actual_credit = min(german_tax, credit_limit)
+        china_tax_after = max(0, china_tax_before - actual_credit)
+        total_tax_after = german_tax + china_tax_after
+        etr_after = total_tax_after / pretax_profit_eur if pretax_profit_eur > 0 else 0
 
         # === 2. ROE 影响 ===
-        net_profit_before = pretax_profit_eur - wt_only
-        net_profit_after = after_tax - div_wt_after
         hgb_cost = HGB_COST.get(pe_risk_level, 0)
-        net_profit_after_net = net_profit_after - hgb_cost
+        net_profit_before = pretax_profit_eur - total_tax_before
+        net_profit_after = pretax_profit_eur - total_tax_after - hgb_cost
 
         roe_before = net_profit_before / total_equity_global_eur if total_equity_global_eur > 0 else 0
-        roe_after = net_profit_after_net / total_equity_global_eur if total_equity_global_eur > 0 else 0
+        roe_after = net_profit_after / total_equity_global_eur if total_equity_global_eur > 0 else 0
 
         # === 3. 盈亏平衡分析 ===
-        # 设子公司: 一次性设立成本 SUBSIDIARY_SETUP, 但法人独立 → 只有 KSt+GewSt, 无 PE 争议
-        # PE 成本: 每年 HGB_COMPLIANCE + 法律风险溢价
-        annual_pe_overhead = hgb_cost + (pretax_profit_eur * 0.02)  # 2% risk premium
-        breakeven = SUBSIDIARY_SETUP / (COMBINED_RATE - DIV_WHT) if (COMBINED_RATE - DIV_WHT) > 0 else float('inf')
-        subsidiary_better = breakeven * 2  # rough threshold
+        breakeven = SUBSIDIARY_SETUP / (GEWST + 0.01) if GEWST > 0 else float('inf')
+        subsidiary_better = breakeven * 3
 
         # === 4. 5年 NPV ===
-        cashflows_before = []
-        cashflows_after = []
+        cashflows_before = []  # PE前: 只有中国 CIT
+        cashflows_after = []   # PE后: 德国税 + 中国税(抵免后) + HGB
+
         for year in range(5):
             profit_y = pretax_profit_eur * ((1 + growth_rate) ** year)
-            wt_y = profit_y * dividend_payout_ratio * DIV_WHT
-            cashflows_before.append(wt_y)
-
-            kst_y = profit_y * (KST + SOLZ)
-            gewst_y = profit_y * GEWST
-            at_y = profit_y - kst_y - gewst_y
-            dw_y = at_y * dividend_payout_ratio * DIV_WHT
-            total_y = kst_y + gewst_y + dw_y + hgb_cost
-            cashflows_after.append(total_y)
+            # PE前
+            cf_before = profit_y * china_cit_rate
+            cashflows_before.append(cf_before)
+            # PE后: 德国税 + 中国税(抵免后) + 合规成本
+            ger_tax_y = profit_y * (KST + SOLZ + GEWST)
+            credit_y = min(ger_tax_y, profit_y * china_cit_rate)
+            chn_tax_y = max(0, profit_y * china_cit_rate - credit_y)
+            cashflows_after.append(ger_tax_y + chn_tax_y + hgb_cost)
 
         def npv(cashflows, rate):
             return sum(cf / ((1 + rate) ** (i + 1)) for i, cf in enumerate(cashflows))
@@ -98,18 +102,14 @@ class FinancialModel:
         npv_after = npv(cashflows_after, discount_rate)
         npv_diff = npv_after - npv_before
 
-        # 重组收益: 投入 SUBSIDIARY_SETUP, 之后每年按 subsidiary 税率
-        subsidiary_annual_tax = pretax_profit_eur * (KST + SOLZ + GEWST)
-        subsidiary_annual_wt = (pretax_profit_eur - subsidiary_annual_tax) * dividend_payout_ratio * DIV_WHT
-        subsidiary_annual_total = subsidiary_annual_tax + subsidiary_annual_wt
+        # 子公司场景: 德国子公司在德国缴税 + 股息预提税汇回中国
         subsidiary_cashflows = []
         for year in range(5):
             profit_y = pretax_profit_eur * ((1 + growth_rate) ** year)
-            kst_y = profit_y * (KST + SOLZ)
-            gewst_y = profit_y * GEWST
-            at_y = profit_y - kst_y - gewst_y
-            dw_y = at_y * dividend_payout_ratio * DIV_WHT
-            subsidiary_cashflows.append(kst_y + gewst_y + dw_y)
+            ger_sub_tax = profit_y * (KST + SOLZ + GEWST)
+            after_tax_profit = profit_y - ger_sub_tax
+            div_wt = after_tax_profit * 0.7 * DIV_WHT  # 股息汇回
+            subsidiary_cashflows.append(ger_sub_tax + div_wt)
 
         npv_subsidiary = npv(subsidiary_cashflows, discount_rate)
         npv_restructure_benefit = npv_after - npv_subsidiary - SUBSIDIARY_SETUP
@@ -117,24 +117,27 @@ class FinancialModel:
         # === 5. 综合建议 ===
         if pe_risk_level in ("low",):
             recommendation = (
-                f"当前 PE 风险较低（{pretax_profit_eur:,.0f}€利润），维持现有经营安排即可。"
-                f"每年合规成本仅 {hgb_cost:,}€。无需设立子公司。"
+                f"当前 PE 风险较低（{pretax_profit_eur:,.0f}€利润），无德国纳税义务。"
+                f"HGB 合规成本仅 {hgb_cost:,}€/年。建议维持现有安排，定期复查。"
             )
         elif pe_risk_level == "medium":
             recommendation = (
-                f"PE 风险中等。建议评估：设立德国子公司一次性成本 {SUBSIDIARY_SETUP:,}€，"
-                f"但可消除 PE 不确定性。若德国利润超过 {subsidiary_better:,.0f}€，设子公司更划算。"
+                f"PE 风险中等。建议委托中德税务顾问进行正式 PE 评估。如果后续业务扩大，"
+                f"提前规划架构（PE vs 子公司）可避免被动局面。当前无需立即行动。"
             )
         elif pe_risk_level == "high":
             recommendation = (
-                f"PE 风险较高，强烈建议进行架构重组。5 年累计额外税负 NPV ≈ {npv_diff:,.0f}€。"
-                f"设立子公司（{SUBSIDIARY_SETUP:,}€一次性成本）可在 {breakeven:,.0f}€ 利润时收回。"
+                f"PE 风险较高。PE 构成将触发德国税负约 €{german_tax:,.0f}/年"
+                f"（中方境外抵免后净增约 €{total_tax_after - total_tax_before:,.0f}/年）。"
+                f"设立子公司一次性成本 €{SUBSIDIARY_SETUP:,}，可在约 {subsidiary_better:,.0f}€ 利润时收回。"
             )
         else:  # constituted
             recommendation = (
-                f"PE 已构成。5 年累计税负 NPV ≈ {npv_after:,.0f}€（vs PE 前 {npv_before:,.0f}€）。"
-                f"建议立即履行 HGB 合规义务（年成本约 {hgb_cost:,}€），"
-                f"同时评估：将 PE 转换为子公司可节约 {npv_restructure_benefit:,.0f}€（5年 NPV）。"
+                f"PE 已构成。双边总有效税率 {etr_after*100:.1f}%（德国 {KST*100+SOLZ*100+GEWST*100:.0f}%"
+                f" + 中方 CIT {china_cit_rate*100:.0f}% 减境外抵免）。"
+                f"5 年累计税负 NPV €{npv_after:,.0f}（vs 无 PE 情景 €{npv_before:,.0f}）。"
+                f"建议：立即履行 HGB 合规义务（年成本约 €{hgb_cost:,}），"
+                f"同时评估转子公司方案（5年 NPV 收益约 €{npv_restructure_benefit:,.0f}）。"
             )
 
         return FinancialImpactResult(

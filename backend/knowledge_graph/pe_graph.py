@@ -76,38 +76,38 @@ class PEGraphBuilder:
 
         # === Layer 3: 触发条件 ===
         conditions_fixed = [
-            ("cond_place", "固定营业场所\n(Q1)"),
-            ("cond_control", "企业支配权\n(Q2)"),
-            ("cond_duration", "持续>6个月\n(Q3)"),
-            ("cond_storage", "纯仓储豁免\n(Q4, 负权重)"),
-            ("cond_procure", "纯采购豁免\n(Q5, 负权重)"),
-            ("cond_prep", "准备辅助豁免\n(Q6, 负权重)"),
-            ("cond_fragment", "反碎片化规则\n(Q7)"),
+            ("cond_place", "固定营业场所\n(Q1)", 8),
+            ("cond_control", "企业支配权\n(Q2)", 6),
+            ("cond_duration", "持续>6个月\n(Q3)", 7),
+            ("cond_storage", "纯仓储豁免\n(Q4)", -5),
+            ("cond_procure", "纯采购豁免\n(Q5)", -4),
+            ("cond_prep", "准备辅助豁免\n(Q6)", -5),
+            ("cond_fragment", "反碎片化规则\n(Q7)", 8),
         ]
-        for cid, clabel in conditions_fixed:
+        for cid, clabel, _ in conditions_fixed:
             self.graph.add_node(cid, label=clabel, layer=2, type="condition",
                                 color=self.COLORS["exemption"] if "豁免" in clabel else self.COLORS["condition"],
                                 size=18)
             self.graph.add_edge("pe_fixed", cid, relation="要件")
 
         conditions_construction = [
-            ("cond_site", "建筑/安装工程\n(Q8)"),
-            ("cond_12m", "持续>12个月\n(Q9, 权重10)"),
-            ("cond_split", "合同拆分风险\n(Q10)"),
+            ("cond_site", "建筑/安装工程\n(Q8)", 6),
+            ("cond_12m", "持续>12个月\n(Q9)", 10),
+            ("cond_split", "合同拆分风险\n(Q10)", 6),
         ]
-        for cid, clabel in conditions_construction:
+        for cid, clabel, _ in conditions_construction:
             self.graph.add_node(cid, label=clabel, layer=2, type="condition",
                                 color=self.COLORS["condition"], size=18)
             self.graph.add_edge("pe_construction", cid, relation="要件")
 
         conditions_agent = [
-            ("cond_person", "德国有派驻人员\n(Q11)"),
-            ("cond_sign", "经常行使缔约权\n(Q12, 权重10)"),
-            ("cond_independent", "独立代理人豁免\n(Q13, 负权重-8)"),
-            ("cond_exclusive", "≥90%业务单一\n(Q14)"),
-            ("cond_office", "代理人办公场所\n(Q15)"),
+            ("cond_person", "德国有派驻人员\n(Q11)", 6),
+            ("cond_sign", "经常行使缔约权\n(Q12)", 10),
+            ("cond_independent", "独立代理人豁免\n(Q13)", -8),
+            ("cond_exclusive", "≥90%业务单一\n(Q14)", 7),
+            ("cond_office", "代理人办公场所\n(Q15)", 5),
         ]
-        for cid, clabel in conditions_agent:
+        for cid, clabel, _ in conditions_agent:
             self.graph.add_node(cid, label=clabel, layer=2, type="condition",
                                 color=self.COLORS["exemption"] if "豁免" in clabel else self.COLORS["condition"],
                                 size=18)
@@ -123,8 +123,13 @@ class PEGraphBuilder:
         for rid, rlabel, rlevel in risks:
             self.graph.add_node(rid, label=rlabel, layer=3, type="risk",
                                 color=self.COLORS["risk"], size=22)
-            for cid, _ in conditions_fixed + conditions_construction + conditions_agent:
-                self.graph.add_edge(cid, rid, relation="触发" if rlevel != "low" else "豁免")
+            # Semantic edges: positive-weight conditions → higher risk levels;
+            # negative-weight (exemption) conditions → low risk
+            for cid, _, cweight in conditions_fixed + conditions_construction + conditions_agent:
+                if cweight > 0 and rlevel in ("medium", "high", "constituted"):
+                    self.graph.add_edge(cid, rid, relation="触发")
+                elif cweight <= 0 and rlevel == "low":
+                    self.graph.add_edge(cid, rid, relation="豁免")
 
         # === Layer 5: 合规行动 ===
         actions = [

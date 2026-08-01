@@ -529,17 +529,26 @@ def render_result(engine, r=None):
 
             bd = exp.breakdown
             st.markdown(f"<h5 style='color:{TEXT};'>税负明细对比</h5>", unsafe_allow_html=True)
+            bd = exp.breakdown
+            st.markdown(f"<h5 style='color:{TEXT};'>双边税负明细对比</h5>", unsafe_allow_html=True)
             st.table({
-                "税种/成本项": ["企业所得税(KSt+SolZ)", "营业税(GewSt ≈14%)", "股息预提税(协定5%)", "HGB合规成本", "年度合计"],
-                "PE构成前 (€)": ["0", "0", f"{bd['div_wt_before_pe_eur']:,.0f}", "0", f"{exp.withholding_tax_eur:,.0f}"],
-                "PE构成后 (€)": [f"{bd['kst_solz_eur']:,.0f}", f"{bd['gewst_eur']:,.0f}",
-                              f"{bd['div_wt_after_pe_eur']:,.0f}", f"{exp.hgb_compliance_cost_eur:,.0f}",
+                "税种/成本项": ["德国企业所得税(KSt+SolZ)", "德国营业税(GewSt ≈14%)",
+                              "中国 CIT (境外抵免后)", "HGB合规成本", "双边年度合计"],
+                "PE构成前 (€)": ["0", "0", f"{bd.get('total_tax_before_pe_eur', 0):,.0f}", "0",
+                              f"{bd.get('total_tax_before_pe_eur', 0):,.0f}"],
+                "PE构成后 (€)": [f"{bd['german_kst_solz_eur']:,.0f}", f"{bd['german_gewst_eur']:,.0f}",
+                              f"{bd['china_tax_after_credit_eur']:,.0f}", f"{exp.hgb_compliance_cost_eur:,.0f}",
                               f"{exp.total_pe_tax_eur + exp.hgb_compliance_cost_eur:,.0f}"],
-                "差异 (€)": [f"+{bd['kst_solz_eur']:,.0f}", f"+{bd['gewst_eur']:,.0f}",
-                          f"{bd['div_wt_after_pe_eur'] - bd['div_wt_before_pe_eur']:+,.0f}",
+                "差异 (€)": [f"+{bd['german_kst_solz_eur']:,.0f}", f"+{bd['german_gewst_eur']:,.0f}",
+                          f"{bd['china_tax_after_credit_eur'] - bd.get('total_tax_before_pe_eur', 0):+,.0f}",
                           f"+{exp.hgb_compliance_cost_eur:,.0f}", f"+{exp.total_annual_exposure_eur:,.0f}"],
             })
-            st.caption(f"PE有效税率约 {exp.corporate_tax_rate}%（含KSt+SolZ+GewSt），远高于仅预提税的5%")
+            st.caption(
+                f"PE 后德国侧税率 ≈ {exp.corporate_tax_rate}%"
+                f"（KSt+SolZ+GewSt）；中国侧境外税收抵免上限为 CIT {bd.get('china_tax_before_credit_eur', 0):,.0f}€，"
+                f"实际抵免 {bd.get('china_foreign_credit_eur', 0):,.0f}€。"
+                f"PE 前仅中国 CIT（协定第7条第1款，营业利润由居民国征税）。"
+            )
 
         # --- Financial Model (ETR / ROE / Breakeven / 5yr NPV) ---
         st.divider()

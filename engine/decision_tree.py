@@ -82,18 +82,16 @@ class PEEngine:
                 pass
 
         thresholds = self.rules["risk_thresholds"]
+        # Boundary: low(0-8) | medium(9-18) | high(19-29) | constituted(≥30)
+        # Use strict > on upper bounds to avoid overlap with constituted's min_score
         if score >= thresholds["constituted"]["min_score"]:
-            level = thresholds["constituted"]
-            risk_level = "constituted"
-        elif score >= thresholds["high"]["max_score"]:
-            level = thresholds["high"]
-            risk_level = "high"
-        elif score >= thresholds["medium"]["max_score"]:
-            level = thresholds["medium"]
-            risk_level = "medium"
+            level, risk_level = thresholds["constituted"], "constituted"
+        elif score > thresholds["medium"]["max_score"]:
+            level, risk_level = thresholds["high"], "high"
+        elif score > thresholds["low"]["max_score"]:
+            level, risk_level = thresholds["medium"], "medium"
         else:
-            level = thresholds["low"]
-            risk_level = "low"
+            level, risk_level = thresholds["low"], "low"
 
         return PEResult(
             risk_level=risk_level,

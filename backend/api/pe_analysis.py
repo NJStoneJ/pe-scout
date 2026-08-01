@@ -40,7 +40,7 @@ async def analyze_pe(req: PEAnalysisRequest):
     exposure = None
     if req.profit_eur:
         tec = TaxExposureCalculator()
-        exp = tec.calculate(req.profit_eur, result.risk_level, req.payout_ratio or 0.7)
+        exp = tec.calculate(req.profit_eur, result.risk_level, china_cit_rate=0.25)
         exposure = {
             "pre_tax_profit_eur": exp.pre_tax_profit_eur,
             "withholding_tax_eur": exp.withholding_tax_eur,
