@@ -2,6 +2,8 @@
 
 基于 **LLM Agent + RAG + 知识图谱** 的智能税务合规平台，专为中国企业出海德国场景设计的常设机构（PE）风险分析工具。
 
+🌐 **在线体验**：https://pe-scout.streamlit.app
+
 [![Python](https://img.shields.io/badge/Python-3.11+-blue)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red)](https://streamlit.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green)](https://fastapi.tiangolo.com)
@@ -15,6 +17,13 @@ streamlit run app.py
 ```
 
 浏览器打开 http://localhost:8501
+
+### 公网部署（Streamlit Cloud）
+
+- 在线地址：https://pe-scout.streamlit.app
+- 部署参数：repository `NJStoneJ/pe-scout` · branch `master` · main file `app.py`
+- Secrets 配置：`DEEPSEEK_API_KEY`（可选，启用 LLM Agent；未配置时自动降级为规则引擎模式）
+- 德国法原文：版权原因不随代码部署，云端使用内置 66 段法律知识库；本地可将 PDF/EPUB 放入 `legal_docs/` 目录启用全文检索
 
 （可选）启动 FastAPI 后端：
 
