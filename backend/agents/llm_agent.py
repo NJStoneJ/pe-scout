@@ -96,7 +96,7 @@ class LLMPEAgent:
                     exp = tec.calculate(profit_eur, risk_level)
                     return json.dumps({
                         "税前利润EUR": exp.pre_tax_profit_eur,
-                        "PE前仅预提税EUR": exp.withholding_tax_eur,
+                        "PE前德国预提税EUR": exp.withholding_tax_eur,
                         "PE后总税负EUR": exp.total_pe_tax_eur,
                         "年度税负差异EUR": exp.annual_tax_difference_eur,
                         "HGB合规成本EUR": exp.hgb_compliance_cost_eur,

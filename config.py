@@ -3,7 +3,7 @@
 import os
 from pathlib import Path
 
-# Auto-load .env file
+# Auto-load .env file (local dev)
 _ENV_FILE = Path(__file__).parent / ".env"
 if _ENV_FILE.exists():
     with open(_ENV_FILE, "r", encoding="utf-8") as f:
@@ -14,6 +14,16 @@ if _ENV_FILE.exists():
                 key, value = key.strip(), value.strip()
                 if key not in os.environ:
                     os.environ[key] = value
+
+# Streamlit Cloud secrets (st.secrets) override .env
+try:
+    import streamlit as _st
+    _secrets = _st.secrets
+    for _k in ("DEEPSEEK_API_KEY", "GERMAN_LAW_DIR"):
+        if _k in _secrets and _k not in os.environ:
+            os.environ[_k] = str(_secrets[_k])
+except Exception:
+    pass  # Not running under Streamlit
 
 # Project paths
 PROJECT_ROOT = Path(__file__).parent

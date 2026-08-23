@@ -181,7 +181,7 @@ def render_welcome(engine):
         st.markdown(f"""
         <div class="card" style="border-left:3px solid {GREEN};">
         <p style="color:{TEXT_MUTED};font-size:12px;margin:0;">
-        <strong style="color:{GREEN};">PE构成前：</strong>仅预提税 ≈ 5-10%<br>
+        <strong style="color:{GREEN};">PE构成前：</strong>德国无征税权（协定第7条），仅中国CIT<br>
         <strong style="color:{RED};">PE构成后：</strong>企业所得税 ≈ 30% + HGB合规成本
         </p>
         </div>
@@ -901,11 +901,18 @@ def render_chat_agent():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
     if "agent" not in st.session_state:
-        st.session_state.agent = PEAgent()
+        try:
+            st.session_state.agent = PEAgent()
+        except Exception as e:
+            st.session_state.agent = None
+            st.error(f"⚠️ 分析 Agent 初始化失败：{e}。请检查依赖或环境变量后刷新页面。")
     if "feedback_collector" not in st.session_state:
         st.session_state.feedback_collector = FeedbackCollector()
 
     agent = st.session_state.agent
+    if agent is None:
+        st.warning("⚠️ 当前无法加载分析引擎，对话功能已停用；其余页面不受影响。")
+        return
 
     # LLM status badge
     llm_available = agent.llm_agent is not None and agent.llm_agent.is_ready
@@ -942,11 +949,14 @@ def render_chat_agent():
         with cols[i]:
             if st.button(sug[:40] + "...", key=f"sug_{i}", use_container_width=True):
                 st.session_state.chat_history.append({"role": "user", "content": sug})
-                resp = agent.process_message(sug)
-                st.session_state.chat_history.append({"role": "assistant", "content": resp["reply"],
-                                                       "confidence": resp["confidence"],
-                                                       "suggested": resp["suggested_actions"],
-                                                       "tool_calls": resp.get("extracted_facts", {}).get("tool_calls", [])})
+                try:
+                    resp = agent.process_message(sug)
+                    st.session_state.chat_history.append({"role": "assistant", "content": resp["reply"],
+                                                           "confidence": resp["confidence"],
+                                                           "suggested": resp["suggested_actions"],
+                                                           "tool_calls": resp.get("extracted_facts", {}).get("tool_calls", [])})
+                except Exception as e:
+                    st.error(f"⚠️ 处理消息时出错：{e}")
                 st.rerun()
 
     st.divider()
@@ -979,11 +989,14 @@ def render_chat_agent():
     user_input = st.chat_input("输入您的中德PE相关问题..." + (" (LLM 推理模式)" if llm_available else ""))
     if user_input:
         st.session_state.chat_history.append({"role": "user", "content": user_input})
-        resp = agent.process_message(user_input)
-        st.session_state.chat_history.append({"role": "assistant", "content": resp["reply"],
-                                               "confidence": resp["confidence"],
-                                               "suggested": resp["suggested_actions"],
-                                               "tool_calls": resp.get("extracted_facts", {}).get("tool_calls", [])})
+        try:
+            resp = agent.process_message(user_input)
+            st.session_state.chat_history.append({"role": "assistant", "content": resp["reply"],
+                                                   "confidence": resp["confidence"],
+                                                   "suggested": resp["suggested_actions"],
+                                                   "tool_calls": resp.get("extracted_facts", {}).get("tool_calls", [])})
+        except Exception as e:
+            st.error(f"⚠️ 处理消息时出错：{e}")
         st.rerun()
 
 
@@ -1182,9 +1195,9 @@ def main():
             "free_text": "📝 自由文本输入",
             "assessment": "🔍 逐题问答评估",
             "comparison": "⚖️ 双场景对比",
-            "chat_agent": "🤖 AI 咨询 Agent (NEW)",
-            "knowledge_graph": "🕸️ 法律知识图谱 (NEW)",
-            "rag_search": "🔎 条文语义检索 (NEW)",
+            "chat_agent": "🤖 AI 咨询 Agent",
+            "knowledge_graph": "🕸️ 法律知识图谱",
+            "rag_search": "🔎 条文语义检索",
             "tax_params": "📊 中德税务参数速查",
             "cases": "📋 虚拟案例库",
         }

@@ -115,7 +115,7 @@ class PEGraphBuilder:
 
         # === Layer 4: 风险后果 ===
         risks = [
-            ("risk_low", "低风险\n仅预提税5-10%", "low"),
+            ("risk_low", "低风险\n德国无征税权(协定第7条)", "low"),
             ("risk_medium", "中风险\n建议专业评估", "medium"),
             ("risk_high", "高风险\n需紧急行动", "high"),
             ("risk_constituted", "已构成PE\n企业所得税≈30%\n+HGB合规", "constituted"),

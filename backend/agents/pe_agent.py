@@ -246,8 +246,8 @@ class PEAgent:
         lines = ["关于PE税负，以典型场景（假设€200万年利润，中国CIT 25%）为例：\n"]
         lines.append("**PE构成前后双边税负对比（协定第7条 + 中国企业所得税法第23条）：**")
         lines.append("- PE前：德国无征税权（协定第7条第1款），仅中国CIT ≈ €500,000/年")
-        lines.append("- PE后：德国KSt+SolZ+GewSt≈30% = €600,000，中国CIT €500,000 − 境外抵免≈€100,000")
-        lines.append("- **年度净增税负 ≈ €200,000/年 + HGB合规成本**\n")
+        lines.append("- PE后：德国 KSt+SolZ+GewSt ≈30% ≈ €596,500；中国 CIT €500,000 − 境外抵免 €500,000 = 补缴 ≈ €0")
+        lines.append("- **年度净增税负 ≈ €96,500/年 + HGB合规成本**\n")
         lines.append("实际金额取决于您的德国利润规模和具体业务结构。请在「税负量化」页面输入具体数字查看精确计算。")
         return "\n".join(lines)
 

@@ -16,6 +16,11 @@ LAW_FILES = {
     "KStG": "KStG.pdf",
     "UStG": "UStG.pdf",
     "HGB": "HGB.epub",
+    "AktG": "AktG.pdf",
+    "GmbHG": "GmbHG.pdf",
+    "InsO": "InsO.pdf",
+    "PartGG": "PartGG.pdf",
+    "UmwStG": "UmwStG.pdf",
 }
 
 # Fallback: alternative filenames for backward compatibility
@@ -25,7 +30,21 @@ _FALLBACK_NAMES = {
     "KStG": ["Kommentar Körperschaftsteuer KStG (Arne Schnitger, Oliver Fehrenbacher) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
     "UStG": ["UStG (Christoph Wäger (editor)) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
     "HGB": ["HGB (Jost Scholl) (z-library.sk, 1lib.sk, z-lib.sk).epub"],
+    "AktG": ["AktG  Kommentar zum Aktiengesetz (Thomas Wachter) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
+    "GmbHG": ["GmbHG ( etc.) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
+    "InsO": ["InsO Kommentar zur Insolvenzordnung (Marie Luise Graf-Schlicker (editor)) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
+    "PartGG": ["PartGG (Volker Römermann) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
+    "UmwStG": ["Das Umwandlungssteuerrecht der Mitunternehmerschaft Eine Analyse der § 6 Abs. 5 EStG, § 24 UmwStG und der Realteilung anhand… (Lisa Astrid Riedel) (z-library.sk, 1lib.sk, z-lib.sk).pdf"],
 }
+
+# Laws whose FULL text is indexed (small + core PE provisions).
+# All other laws are filtered to PE-relevant pages only to keep the index focused.
+KEEP_FULL = {"AO", "HGB"}
+
+# Pre-extracted JSON directory (produced by offline extraction script).
+# If {GERMAN_LAW_DIR}/extracted_law_pe/{label}.json exists, it is used directly
+# (no source PDF needed at runtime). Otherwise the loader extracts from source.
+EXTRACTED_JSON_DIR = LAW_DIR / "extracted_law_pe"
 
 
 def _resolve_file(label: str) -> Path | None:
@@ -73,6 +92,15 @@ class GermanLawLoader:
         """加载所有可用的德国法文件，返回文档列表"""
         documents = []
         for label in LAW_FILES:
+            # 1) 优先使用预提取 JSON（运行时无需源 PDF）
+            json_path = EXTRACTED_JSON_DIR / f"{label}.json"
+            if json_path.exists():
+                docs = self._load_json(label, json_path)
+                documents.extend(docs)
+                logger.info(f"  {label}: {len(docs)} chunks (pre-extracted JSON)")
+                continue
+
+            # 2) 回退到源 PDF/EPUB
             filepath = _resolve_file(label)
             if filepath is None:
                 logger.info(f"{label}: file not found in {LAW_DIR} (place {LAW_FILES[label]} there)")
@@ -92,6 +120,19 @@ class GermanLawLoader:
             logger.info(f"  {label}: {len(docs)} chunks extracted")
 
         return documents
+
+    def _load_json(self, label: str, filepath: Path) -> list[dict]:
+        """Load pre-extracted chunks from JSON (written by offline extraction)."""
+        try:
+            import json
+            raw = json.load(open(filepath, "r", encoding="utf-8"))
+            for d in raw:
+                d.setdefault("type", "german_law_fulltext")
+                d.setdefault("law", label)
+            return raw
+        except Exception as e:
+            logger.warning(f"Failed to load JSON {filepath}: {e}")
+            return []
 
     def _load_pdf(self, label: str, filepath: Path) -> list[dict]:
         """Extract PE-relevant text chunks from PDF"""
@@ -118,8 +159,8 @@ class GermanLawLoader:
             # Clean: remove excessive whitespace, fix line breaks
             text = re.sub(r'\s+', ' ', text).strip()
 
-            # For large books (EStG, KStG), filter to PE-relevant pages only
-            if label in ("EStG", "KStG", "UStG"):
+            # For large books, filter to PE-relevant pages only (AO/HGB kept full)
+            if label not in KEEP_FULL:
                 if not PE_TERMS.search(text):
                     continue
 
