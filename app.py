@@ -1,4 +1,4 @@
-"""PE-Scout v3.0: 中德常设机构风险分析助手 — 黑绿德勤主题 + 对比 + 自由文本 + What-If"""
+"""PE-Scout v4.0: 中德常设机构风险分析助手 — 黑绿德勤主题 + 对比 + 自由文本 + What-If"""
 
 import json, sys, re
 from pathlib import Path
@@ -132,7 +132,7 @@ def risk_badge_html(label, color, score=None):
 # WELCOME
 # ============================================================
 def render_welcome(engine):
-    st.markdown('<div class="main-header"><h1>PE-Scout</h1><p>中德常设机构风险分析助手 v3.0 · Betriebstätten-Risikoanalyse</p></div>',
+    st.markdown('<div class="main-header"><h1>PE-Scout</h1><p>中德常设机构风险分析助手 · Betriebstätten-Risikoanalyse</p></div>',
                 unsafe_allow_html=True)
     col1, col2 = st.columns([3, 2])
     with col1:
@@ -144,7 +144,7 @@ def render_welcome(engine):
         提供PE风险<strong>智能识别 → 税负量化 → 合规清单 → What-If推演</strong>全链路分析。
         </p>
         <ul style="color:{TEXT};font-size:13px;line-height:2;">
-        <li><strong>自由文本模式</strong> — 粘贴业务描述，AI自动提取法律要件</li>
+        <li><strong>自由文本模式</strong> — 粘贴业务描述，关键词自动识别法律要件</li>
         <li><strong>15题精准判定</strong> — 三组PE分类 + 四档风险等级</li>
         <li><strong>税负暴露量化</strong> — PE前后税负差异€金额计算</li>
         <li><strong>HGB合规清单</strong> — 按风险等级自动生成德国商法典待办</li>
@@ -255,7 +255,7 @@ def render_assessment(engine):
 # FREE TEXT MODE (E)
 # ============================================================
 def render_free_text(engine):
-    st.markdown('<div class="main-header"><h1>自由文本输入</h1><p>粘贴企业德国业务描述 · AI自动提取PE风险要素</p></div>',
+    st.markdown('<div class="main-header"><h1>自由文本输入</h1><p>粘贴企业德国业务描述 · 关键词自动识别PE风险要素</p></div>',
                 unsafe_allow_html=True)
     c1, c2 = st.columns([1, 8])
     with c1:
@@ -282,7 +282,7 @@ def render_free_text(engine):
 
     col1, col2, col3 = st.columns([2, 1, 4])
     with col1:
-        if st.button("🔍 智能提取PE要素", type="primary", use_container_width=True):
+        if st.button("🔍 识别PE要素", type="primary", use_container_width=True):
             if len(text.strip()) < 30:
                 st.warning("请输入至少30字的业务描述")
             else:
@@ -890,7 +890,7 @@ def render_cases(engine):
 # CHAT AGENT PAGE
 # ============================================================
 def render_chat_agent():
-    st.markdown('<div class="main-header"><h1>AI 税务咨询 Agent</h1><p>DeepSeek LLM + 规则引擎 + RAG 法律检索 · 三引擎驱动</p></div>',
+    st.markdown('<div class="main-header"><h1>税务智能问答</h1><p>规则引擎问答 + 法条检索 · 可选接入大模型增强</p></div>',
                 unsafe_allow_html=True)
 
     c1, c2 = st.columns([1, 8])
@@ -1004,7 +1004,7 @@ def render_chat_agent():
 # KNOWLEDGE GRAPH PAGE
 # ============================================================
 def render_knowledge_graph():
-    st.markdown('<div class="main-header"><h1>PE 法律知识图谱</h1><p>中德PE四层合规推理模型 · 交互式可视化</p></div>',
+    st.markdown('<div class="main-header"><h1>PE 法律知识图谱</h1><p>中德PE五层合规推理模型 · 交互式可视化</p></div>',
                 unsafe_allow_html=True)
     if st.button("← 返回首页", key="back_kg"):
         reset_assessment(); st.session_state.page = "welcome"; st.rerun()
@@ -1017,7 +1017,7 @@ def render_knowledge_graph():
 
     col1, col2 = st.columns([2, 1])
     with col1:
-        st.markdown(f"<h4 style='color:{GREEN_LIGHT};'>四层合规推理结构</h4>", unsafe_allow_html=True)
+        st.markdown(f"<h4 style='color:{GREEN_LIGHT};'>五层合规推理结构</h4>", unsafe_allow_html=True)
 
         chain = kg.compliance_chain("constituted")
         for layer in chain:
@@ -1124,7 +1124,7 @@ def render_knowledge_graph():
 # RAG SEARCH PAGE
 # ============================================================
 def render_rag_search():
-    st.markdown('<div class="main-header"><h1>法律文档语义检索</h1><p>中德税法全文本地检索 · 基于关键词匹配</p></div>',
+    st.markdown('<div class="main-header"><h1>法律文档检索</h1><p>中德税法全文本地检索 · 基于关键词匹配（BM25）</p></div>',
                 unsafe_allow_html=True)
     if st.button("← 返回首页", key="back_rag"):
         reset_assessment(); st.session_state.page = "welcome"; st.rerun()
@@ -1187,7 +1187,7 @@ def main():
 
     with st.sidebar:
         st.markdown(f"<h2 style='color:{GREEN};font-weight:400;'>PE-Scout</h2>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color:{TEXT_MUTED};font-size:12px;'>中德常设机构风险分析 v4.0</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color:{TEXT_MUTED};font-size:12px;'>中德常设机构风险分析</p>", unsafe_allow_html=True)
         st.divider()
 
         pages = {
@@ -1195,9 +1195,9 @@ def main():
             "free_text": "📝 自由文本输入",
             "assessment": "🔍 逐题问答评估",
             "comparison": "⚖️ 双场景对比",
-            "chat_agent": "🤖 AI 咨询 Agent",
+            "chat_agent": "🤖 税务智能问答",
             "knowledge_graph": "🕸️ 法律知识图谱",
-            "rag_search": "🔎 条文语义检索",
+            "rag_search": "🔎 条文检索",
             "tax_params": "📊 中德税务参数速查",
             "cases": "📋 虚拟案例库",
         }
@@ -1212,7 +1212,7 @@ def main():
 
         st.divider()
         st.caption(f"中德税收协定第5条 + 德国AO §12-13")
-        st.caption(f"v4.0 · Agent+RAG+KG · 2026.07")
+        st.caption(f"Agent+RAG+KG · 2026.07")
         st.caption("仅供参考，不构成专业税务意见")
 
     engine = PEEngine()
@@ -1229,7 +1229,7 @@ def main():
     elif page == "tax_params": render_tax_params(calc)
     elif page == "cases": render_cases(engine)
 
-    st.markdown(f'<div class="footer-note">PE-Scout v4.0 · Agent+RAG+Knowledge Graph · © 2026</div>',
+    st.markdown(f'<div class="footer-note">PE-Scout · Agent+RAG+Knowledge Graph · © 2026</div>',
                 unsafe_allow_html=True)
 
 
