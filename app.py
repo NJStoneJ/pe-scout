@@ -1123,6 +1123,71 @@ def render_knowledge_graph():
 # ============================================================
 # RAG SEARCH PAGE
 # ============================================================
+# ---- 法律检索结果美化：裸文件名/枚举值 → 人类可读标签 ----
+_LAW_LABELS = {
+    "AO": "德国租税通则 (AO)", "EStG": "德国所得税法 (EStG)",
+    "KStG": "德国公司税法 (KStG)", "UStG": "德国增值税法 (UStG)",
+    "HGB": "德国商法典 (HGB)", "AktG": "德国股份法 (AktG)",
+    "GmbHG": "德国有限责任公司法 (GmbHG)", "InsO": "德国破产法 (InsO)",
+    "PartGG": "德国合伙法 (PartGG)", "UmwStG": "德国改组税法 (UmwStG)",
+}
+_TYPE_LABELS = {
+    "pe_classification": "PE 分类规则", "legal_requirement": "判定要件",
+    "legal_provision": "法律条文", "hgb_compliance": "商法合规清单",
+    "treaty_fulltext": "协定 / BEPS 全文", "german_law_fulltext": "德国法原文",
+}
+
+
+def _pretty_source(src, law="", page_range=""):
+    """裸文件名/枚举 → 可读来源标签"""
+    mapping = {
+        "rules.json": "内置规则库", "legal_basis.json": "法律条文库",
+        "hgb_checklist.json": "商法合规清单", "builtin": "协定 / BEPS 全文",
+    }
+    if src in mapping:
+        return mapping[src]
+    if law and law in _LAW_LABELS:
+        base = _LAW_LABELS[law]
+        return f"{base} · 第 {page_range} 页" if page_range else base
+    m = re.match(r"(AO|EStG|KStG|UStG|HGB|AktG|GmbHG|InsO|PartGG|UmwStG)", src or "")
+    if m and m.group(1) in _LAW_LABELS:
+        pm = re.search(r"page\s*([\d\-]+)", src or "")
+        return f"{_LAW_LABELS[m.group(1)]} · 第 {pm.group(1)} 页" if pm else _LAW_LABELS[m.group(1)]
+    return src or "未知来源"
+
+
+def _pretty_type(t):
+    return _TYPE_LABELS.get(t, t or "其他")
+
+
+def _relevance_tier(score):
+    """BM25 归一化分 → 可读档位 + 颜色"""
+    if score >= 0.6:
+        return "高度相关", GREEN
+    if score >= 0.25:
+        return "相关", YELLOW
+    return "弱相关", TEXT_MUTED
+
+
+def _split_basis(content):
+    """把 '法律依据：...' 从正文拆出，单独成行展示"""
+    idx = content.find("法律依据：")
+    if idx == -1:
+        return content.strip(), ""
+    return content[:idx].strip(), content[idx:].strip()
+
+
+def _title_from(body):
+    """取正文首句作标题，避免裸露截断 + 文件名"""
+    if not body:
+        return ""
+    for sep in ["。", ". ", "！", "？", "?", "；"]:
+        if sep in body:
+            body = body.split(sep)[0]
+            break
+    return body[:50]
+
+
 def render_rag_search():
     st.markdown('<div class="main-header"><h1>法律文档检索</h1><p>中德税法全文本地检索 · 基于关键词匹配（BM25）</p></div>',
                 unsafe_allow_html=True)
@@ -1140,11 +1205,15 @@ def render_rag_search():
     if not ds._initialized:
         ds._initialized = True
 
+    _laws_loaded = sorted({d.get("law") for d in ds.documents if d.get("law")})
+    _law_names = " · ".join(_LAW_LABELS.get(l, l) for l in _laws_loaded)
+    _total_chars = sum(len(d.get("text", "")) for d in ds.documents)
     st.markdown(f"""
     <div class="card" style="border-left:3px solid {GREEN};">
     <p style="color:{TEXT_MUTED};font-size:13px;margin:0;">
-    已索引 <strong style="color:{GREEN};">{len(ds.documents)}</strong> 个法律文档片段，覆盖：
-    中德税收协定第5条全文 · OECD范本注释 · 德国AO §12-13 · BEPS行动7 · HGB合规条款 · 15个PE法律要件
+    已索引 <strong style="color:{GREEN};">{len(ds.documents):,}</strong> 个法律文档片段，约
+    <strong style="color:{GREEN};">{_total_chars:,}</strong> 字符，覆盖：
+    {_law_names or '中德税收协定第5条 · OECD范本注释 · BEPS行动7 · HGB合规条款 · 15个PE判定要件'}
     </p>
     </div>
     """, unsafe_allow_html=True)
@@ -1157,13 +1226,20 @@ def render_rag_search():
             results = ds.search(query, top_k=8)
 
         if results:
-            st.markdown(f"找到 **{len(results)}** 条相关结果：")
+            st.markdown(f"找到 **{len(results)}** 条相关结果，按相关度排序：")
             for i, r in enumerate(results):
-                score_color = GREEN if r["score"] > 0.5 else (YELLOW if r["score"] > 0.2 else TEXT_MUTED)
-                with st.expander(f"[{r['score']:.0%}] {r['content'][:80]}...  ({r['source']})",
-                                 expanded=i < 3):
-                    st.markdown(r["content"])
-                    st.caption(f"来源: {r['source']} · 类型: {r['type']} · 相关度: {r['score']:.0%}")
+                body, basis = _split_basis(r["content"])
+                tier, _ = _relevance_tier(r["score"])
+                src_label = _pretty_source(r.get("source", ""), r.get("law", ""), r.get("page_range", ""))
+                type_label = _pretty_type(r.get("type", ""))
+                title = _title_from(body)
+                with st.expander(f"{tier} · {title}", expanded=i < 3):
+                    st.markdown(body)
+                    if basis:
+                        st.markdown(
+                            f"<span style='color:{GREEN_LIGHT};font-size:13px;'>📌 {basis}</span>",
+                            unsafe_allow_html=True)
+                    st.caption(f"{type_label} · {src_label} · 相关度 {r['score']:.0%}")
         else:
             st.warning("未找到相关结果，请尝试其他关键词。")
 
@@ -1171,12 +1247,13 @@ def render_rag_search():
     st.markdown(f"<h4 style='color:{GREEN_LIGHT};'>文档来源</h4>", unsafe_allow_html=True)
     sources = [
         "中德税收协定 (2014) 第5条第1-6款",
-        "德国租税通则 (AO) §12 常设机构定义",
-        "德国租税通则 (AO) §13 常设代理人",
+        "德国租税通则 (AO) §12-13 常设机构与代理人",
+        "德国商法典 (HGB) §238-263 账簿与年报",
         "OECD 税收协定范本注释 (2017) 第5条",
         "BEPS 行动计划7最终报告 (2015)",
-        "德国商法典 (HGB) §238-263 账簿+年报",
-        "欧盟最低税指令 2022/2523 支柱二",
+        "德国所得税法 (EStG) · 公司税法 (KStG) · 增值税法 (UStG)",
+        "德国股份法 (AktG) · 有限责任公司法 (GmbHG) · 破产法 (InsO) · 合伙法 (PartGG) · 改组税法 (UmwStG)",
+        "15 个 PE 判定要件规则库 · HGB 合规清单",
     ]
     for src in sources:
         st.markdown(f"- {src}")

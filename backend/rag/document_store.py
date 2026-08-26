@@ -260,6 +260,8 @@ AO第13条常设代理人与企业存在常设代理人关系的人为该企业�
                 "type": doc.get("type", ""),
                 "score": round(norm_score, 4),
                 "doc_id": doc.get("id", ""),
+                "law": doc.get("law", ""),
+                "page_range": doc.get("page_range", ""),
             })
 
         scored.sort(key=lambda x: x["score"], reverse=True)
@@ -281,6 +283,8 @@ AO第13条常设代理人与企业存在常设代理人关系的人为该企业�
                     "source": doc.get("source", "unknown"),
                     "type": doc.get("type", ""),
                     "score": round(score / max(len(keywords), 1), 4),
+                    "law": doc.get("law", ""),
+                    "page_range": doc.get("page_range", ""),
                 })
         scored.sort(key=lambda x: x["score"], reverse=True)
         return scored[:top_k]
